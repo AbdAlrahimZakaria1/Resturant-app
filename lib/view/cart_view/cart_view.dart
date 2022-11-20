@@ -23,7 +23,7 @@ class _CartViewState extends State<CartView> {
         child: Column(children: [
           ListView.builder(
               physics: const BouncingScrollPhysics(),
-              itemCount: 4,
+              itemCount: 5,
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemBuilder: (context, index) {
@@ -77,7 +77,7 @@ class _CartViewState extends State<CartView> {
             alignment: Alignment.centerLeft,
             margin: EdgeInsets.only(top: widget.phoneHeight * 0.02),
             child: const Text(
-              "Toplam: 0.00TL",
+              "Toplam: 1.00TL",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
             ),
           ),

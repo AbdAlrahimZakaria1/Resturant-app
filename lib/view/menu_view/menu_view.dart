@@ -3,6 +3,7 @@ import 'package:odev/data/menu.dart';
 
 class MenuView extends StatefulWidget {
   final double phoneWidth, phoneHeight;
+
   const MenuView(this.phoneWidth, this.phoneHeight, {Key? key})
       : super(key: key);
 
@@ -11,6 +12,8 @@ class MenuView extends StatefulWidget {
 }
 
 class _MenuViewState extends State<MenuView> {
+  int counter = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,11 +52,11 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Çorbalar:",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-      ListView(physics: BouncingScrollPhysics(), shrinkWrap: true, children: [
-        listView(0, corba),
-        listView(1, corba),
-        listView(2, corba),
-      ]),
+      ListView.builder(physics: BouncingScrollPhysics(), shrinkWrap: true,
+          itemCount: corba.length,
+          itemBuilder: (context, index) {
+            return listView(index, corba);
+          }),
     ]);
   }
 
@@ -66,10 +69,11 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Salatalar:",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-      ListView(shrinkWrap: true, physics: BouncingScrollPhysics(), children: [
-        listView(0, salata),
-        listView(1, salata),
-      ]),
+      ListView.builder(physics: BouncingScrollPhysics(), shrinkWrap: true,
+          itemCount: salata.length,
+          itemBuilder: (context, index) {
+            return listView(index, salata);
+          }),
     ]);
   }
 
@@ -82,11 +86,11 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Zeytinyağlılar:",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-      ListView(physics: BouncingScrollPhysics(), shrinkWrap: true, children: [
-        listView(0, zeytin),
-        listView(1, zeytin),
-        listView(2, zeytin),
-      ]),
+      ListView.builder(physics: BouncingScrollPhysics(), shrinkWrap: true,
+          itemCount: zeytin.length,
+        itemBuilder: (context, index) {
+          return listView(index, zeytin);
+        }),
     ]);
   }
 
@@ -99,13 +103,11 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Ara Sıcaklar:",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-      ListView(physics: BouncingScrollPhysics(), shrinkWrap: true, children: [
-        listView(0, ara),
-        listView(1, ara),
-        listView(2, ara),
-        listView(3, ara),
-        listView(4, ara),
-      ]),
+      ListView.builder(physics: BouncingScrollPhysics(), shrinkWrap: true,
+          itemCount: ara.length,
+          itemBuilder: (context, index) {
+            return listView(index, ara);
+          }),
     ]);
   }
 
@@ -118,15 +120,11 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Ana Yemekler:",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-      ListView(physics: BouncingScrollPhysics(), shrinkWrap: true, children: [
-        listView(0, ana),
-        listView(1, ana),
-        listView(2, ana),
-        listView(3, ana),
-        listView(4, ana),
-        listView(5, ana),
-        listView(6, ana),
-      ]),
+      ListView.builder(physics: BouncingScrollPhysics(), shrinkWrap: true,
+          itemCount: ana.length,
+          itemBuilder: (context, index) {
+            return listView(index, ana);
+          }),
     ]);
   }
 
@@ -139,14 +137,11 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("İçecekler:",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-      ListView(physics: BouncingScrollPhysics(), shrinkWrap: true, children: [
-        listView(0, icecekler),
-        listView(1, icecekler),
-        listView(2, icecekler),
-        listView(3, icecekler),
-        listView(4, icecekler),
-        listView(5, icecekler),
-      ]),
+      ListView.builder(physics: BouncingScrollPhysics(), shrinkWrap: true,
+          itemCount: icecekler.length,
+          itemBuilder: (context, index) {
+            return listView(index, icecekler);
+          }),
     ]);
   }
 
@@ -159,12 +154,11 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Tatlılar:",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-      ListView(physics: BouncingScrollPhysics(), shrinkWrap: true, children: [
-        listView(0, tatlilar),
-        listView(1, tatlilar),
-        listView(2, tatlilar),
-        listView(3, tatlilar),
-      ]),
+      ListView.builder(physics: BouncingScrollPhysics(), shrinkWrap: true,
+          itemCount: tatlilar.length,
+          itemBuilder: (context, index) {
+            return listView(index, tatlilar);
+          }),
     ]);
   }
 
@@ -193,15 +187,18 @@ class _MenuViewState extends State<MenuView> {
               width: widget.phoneWidth * 0.1,
               height: widget.phoneHeight * 0.04,
               alignment: Alignment.center,
-              child: const Text("0",
-                 style: TextStyle(fontSize: 20)),
+              child: Text("$counter", style: TextStyle(fontSize: 20)),
             ),
             Padding(
               padding: EdgeInsets.only(
                   right: widget.phoneWidth * 0.03,
                   left: widget.phoneWidth * 0.03),
               child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      counter += 1;
+                    });
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                   ),
