@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:odev/data/menu.dart';
+import 'package:odev/view/menu_view/menu_view.dart';
+import '../../DB/sqlDB.dart';
+import '../yemek_pasife_al_view/yemek_pasife_al_view.dart';
 
 class YemekEkleView extends StatefulWidget {
   final double phoneWidth, phoneHeight;
 
-  const YemekEkleView(this.phoneWidth, this.phoneHeight, {Key? key})
-      : super(key: key);
+  const YemekEkleView(this.phoneWidth, this.phoneHeight, {Key? key}) : super(key: key);
 
   @override
   State<YemekEkleView> createState() => _YemekEkleViewState();
 }
 
+Future<int> addFood(foodName, foodPrice, foodType) async {
+  int insertResponse = await sqlDB.insertData("INSERT INTO 'foodMenu1' "
+      "('name', 'price', 'type', 'availability', 'manager_id', 'food_quantity') "
+      "VALUES ('$foodName', '$foodPrice', '$foodType', '1' , 101, 0)");
+  return 0;
+}
+
 class _YemekEkleViewState extends State<YemekEkleView> {
   TextEditingController foodName = new TextEditingController();
   TextEditingController foodPrice = new TextEditingController();
-
+  SqlDB sqlDB = SqlDB();
   String dropdownValue = 'Çorba';
   bool isChecked = false;
+  String? _error;
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +37,7 @@ class _YemekEkleViewState extends State<YemekEkleView> {
         automaticallyImplyLeading: false,
       ),
       body: Padding(
-        padding: EdgeInsets.only(
-            top: widget.phoneHeight * 0.2, left: widget.phoneWidth * 0.03),
+        padding: EdgeInsets.only(top: widget.phoneHeight * 0.2, left: widget.phoneWidth * 0.03),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,6 +64,7 @@ class _YemekEkleViewState extends State<YemekEkleView> {
             yemekFiyat(),
             checkBox(),
             yemekEkleButton(),
+            errorBox()
           ],
         ),
       ),
@@ -63,14 +73,10 @@ class _YemekEkleViewState extends State<YemekEkleView> {
 
   Container dropDownMenu() {
     return Container(
-      margin: EdgeInsets.only(
-          top: widget.phoneHeight * 0.01, bottom: widget.phoneHeight * 0.02),
+      margin: EdgeInsets.only(top: widget.phoneHeight * 0.01, bottom: widget.phoneHeight * 0.02),
       width: widget.phoneWidth * 0.94,
       height: widget.phoneHeight * 0.05,
-      decoration: BoxDecoration(
-          color: Colors.blue[50],
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: Colors.blue.shade200)),
+      decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.blue.shade200)),
       child: DropdownButtonHideUnderline(
         child: ButtonTheme(
           alignedDropdown: true,
@@ -100,8 +106,7 @@ class _YemekEkleViewState extends State<YemekEkleView> {
                 );
               }).toList();
             },
-            items:
-                dropDownMenuItems.map<DropdownMenuItem<String>>((String value) {
+            items: dropDownMenuItems.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -115,8 +120,7 @@ class _YemekEkleViewState extends State<YemekEkleView> {
 
   Container yemekAdiTextField() {
     return Container(
-      margin: EdgeInsets.only(
-          top: widget.phoneHeight * 0.01, bottom: widget.phoneHeight * 0.02),
+      margin: EdgeInsets.only(top: widget.phoneHeight * 0.01, bottom: widget.phoneHeight * 0.02),
       height: widget.phoneHeight * 0.05,
       width: widget.phoneWidth * 0.94,
       child: TextField(
@@ -124,10 +128,8 @@ class _YemekEkleViewState extends State<YemekEkleView> {
         controller: foodName,
         decoration: const InputDecoration(
           hintText: "Bir yemek adı girin",
-          focusedBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         ),
       ),
     );
@@ -145,10 +147,8 @@ class _YemekEkleViewState extends State<YemekEkleView> {
         maxLines: 1,
         decoration: const InputDecoration(
           hintText: "",
-          focusedBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         ),
       ),
     );
@@ -186,45 +186,45 @@ class _YemekEkleViewState extends State<YemekEkleView> {
       padding: EdgeInsets.only(top: widget.phoneHeight * 0.01),
       alignment: Alignment.centerLeft,
       child: ElevatedButton(
-          onPressed: () => addFood(),
-          style: ElevatedButton.styleFrom(
-              fixedSize:
-                  Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),
+          onPressed: () async {
+            if (isChecked) {
+              if (double.parse(foodPrice.text) > 0) {
+                try {
+                  await addFood(foodName.text, double.parse(foodPrice.text), dropdownValue);
+                  await loadDataFromDB();
+                  await printTableLogs();
+                  await addPassiveList();
+                  setState(() {
+                    _error = "";
+                  });
+                } catch (e) {
+                  setState(() {
+                    _error = "Lutfen yukaridaki bilgileri duzeltin";
+                  });
+                }
+              }else{
+                setState(() {
+                  _error = "Lutfen gecerli yemek fiyati giriniz";
+                });
+              }
+            } else if (!isChecked) {
+                setState(() {
+                  _error = "Lutfen onaylama butonu tiklayiniz";
+                });
+              }
+          },
+          style: ElevatedButton.styleFrom(fixedSize: Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),
           child: const Text("Yemek Ekle", style: TextStyle(fontSize: 25))),
     );
   }
 
-  void addFood() {
-    if (dropdownValue == "Çorba") {
-      corba.add(Yemekler("Çorba", foodName.text, double.parse(foodPrice.text)));
-    } else if (dropdownValue == 'Salata') {
-      salata
-          .add(Yemekler('Salata', foodName.text, double.parse(foodPrice.text)));
-    } else if (dropdownValue == 'Zeytinyağlı') {
-      zeytin.add(Yemekler(
-          'Zeytinyağlılar', foodName.text, double.parse(foodPrice.text)));
-    } else if (dropdownValue == 'Ara Sıcak') {
-      ara.add(Yemekler(
-          'Ara Sıcaklar', foodName.text, double.parse(foodPrice.text)));
-    } else if (dropdownValue == 'Ana Yemek') {
-      ana.add(Yemekler(
-          'Ana Yemekler', foodName.text, double.parse(foodPrice.text)));
-    } else if (dropdownValue == 'İçecek') {
-      icecekler.add(
-          Yemekler('İçecekler', foodName.text, double.parse(foodPrice.text)));
-    } else if (dropdownValue == 'Tatlı') {
-      tatlilar.add(
-          Yemekler('Tatlılar', foodName.text, double.parse(foodPrice.text)));
-    }
+  Container errorBox() {
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.only(right: widget.phoneWidth * 0.03),
+      child: Text(_error ?? "", style: const TextStyle(fontSize: 20, color: Colors.red)),
+    );
   }
 }
 
-List<String> dropDownMenuItems = [
-  'Çorba',
-  'Salata',
-  'Zeytinyağlı',
-  'Ara Sıcak',
-  'Ana Yemek',
-  'İçecek',
-  'Tatlı'
-];
+List<String> dropDownMenuItems = ['Çorba', 'Salata', 'Zeytinyağlı', 'Ara Sıcak', 'Ana Yemek', 'İçecek', 'Tatlı'];

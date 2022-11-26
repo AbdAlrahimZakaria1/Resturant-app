@@ -8,6 +8,7 @@ import '../../view/yemek_ekle_view/yemek_ekle_view.dart';
 class MainBottomNavBar extends StatefulWidget {
   int selectedIndex;
   final double phoneWidth, phoneHeight;
+
   MainBottomNavBar(this.phoneWidth, this.phoneHeight, this.selectedIndex, {Key? key}) : super(key: key);
 
   @override
@@ -38,29 +39,29 @@ class _MainBottomNavBarState extends State<MainBottomNavBar> {
     setState(() {
       widget.selectedIndex = index;
     });
-    Navigator.push(context,MaterialPageRoute(builder: (context) => MainBottomNavBar(widget.phoneWidth, widget.phoneHeight, index)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainBottomNavBar(widget.phoneWidth, widget.phoneHeight, index)));
   }
 
   late List<Widget> pages = [
-    MenuView(widget.phoneWidth,widget.phoneHeight),
-    CartView(widget.phoneWidth,widget.phoneHeight),
-    YemekEkleView(widget.phoneWidth,widget.phoneHeight),
-    YemekPasifeAlView(widget.phoneWidth,widget.phoneHeight),
-    LastOrderView(widget.phoneWidth,widget.phoneHeight),
+    MenuView(widget.phoneWidth, widget.phoneHeight),
+    CartView(widget.phoneWidth, widget.phoneHeight),
+    YemekEkleView(widget.phoneWidth, widget.phoneHeight),
+    YemekPasifeAlView(widget.phoneWidth, widget.phoneHeight),
+    LastOrderView(widget.phoneWidth, widget.phoneHeight),
   ];
 
   List<BottomNavigationBarItem> bottomNavList = [
-    bottomNavBarItemsGetter(Icons.menu,"Menu"),
-    bottomNavBarItemsGetter(Icons.shopping_cart,"Sepet"),
-    bottomNavBarItemsGetter(Icons.fastfood,"Yemek Ekle"),
-    bottomNavBarItemsGetter(Icons.no_food,"Yemek Pasife Al"),
-    bottomNavBarItemsGetter(Icons.person,"Geçmiş")
+    bottomNavBarItemsGetter(Icons.menu, "Menu"),
+    bottomNavBarItemsGetter(Icons.shopping_cart, "Sepet"),
+    bottomNavBarItemsGetter(Icons.fastfood, "Yemek Ekle"),
+    bottomNavBarItemsGetter(Icons.no_food, "Yemek Pasife Al"),
+    bottomNavBarItemsGetter(Icons.person, "Geçmiş")
   ];
 }
 
-BottomNavigationBarItem bottomNavBarItemsGetter(icon,String label) {
+BottomNavigationBarItem bottomNavBarItemsGetter(icon, String label) {
   return BottomNavigationBarItem(
-    backgroundColor: Colors.blue,
+      backgroundColor: Colors.blue,
       icon: Icon(icon),
       activeIcon: Icon(
         icon,

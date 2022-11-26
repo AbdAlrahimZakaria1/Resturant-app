@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:odev/view/last_orders_view/last_order_view.dart';
 import 'package:odev/view/menu_view/menu_view.dart';
+import 'package:odev/view/yemek_pasife_al_view/yemek_pasife_al_view.dart';
 import 'package:odev/view_model/bottom_nav_bar/bottom_nav_bar_model.dart';
+import 'data/menu.dart';
 
 void main() {
   runApp(const MyApp());
+  calculateCartPrice();
+  loadDataFromDB();
+  getCheckOutCartPrice();
+  addPassiveList();
 }
 
 class MyApp extends StatefulWidget {
@@ -34,7 +41,7 @@ class Values extends StatelessWidget {
     final double phoneHeight = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/menu',
+      initialRoute: '/',
       routes: {
         '/':(context) => MainBottomNavBar(phoneWidth, phoneHeight, 0),
       },
