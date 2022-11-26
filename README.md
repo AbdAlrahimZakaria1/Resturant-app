@@ -1,6 +1,6 @@
 # odev
 
-A new Flutter project.
+Resturant App, SAZMA!
 
 ## Getting Started
 
