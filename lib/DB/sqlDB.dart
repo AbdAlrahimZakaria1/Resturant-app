@@ -31,30 +31,50 @@ class SqlDB {
     //   db.execute("ALTER TABLE 'foodMenu1' ADD COLUMN 'manager_id' INTEGER");
     // }
     // db.execute("alter table 'cartMenu' add column 'food_quantity' INTEGER");
-
-    // await db.execute('''
-    //   CREATE TABLE "lastOrder" (
-    //   "id" INTEGER  NOT NULL PRIMARY KEY,
-    //   "name" TEXT NOT NULL,
-    //   "price" REAL NOT NULL,
-    //   "food_quantity" INTEGER NOT NULL,
-    //   "total_price" REAL NOT NULL,
-    //   "table_id" INTEGER NOT NULL
-    //   )
-    // ''');
-    // await db.execute('''
-    //   CREATE TABLE "cartMenu1" (
-    //   "id" INTEGER NOT NULL,
-    //   "name" TEXT NOT NULL,
-    //   "price" REAL NOT NULL,
-    //   "food_quantity" INTEGER NOT NULL,
-    //   "total_price" REAL NOT NULL,
-    //   "table_id" INTEGER NOT NULL
-    //   )
-    //   ''');
+    await db.execute('''
+      CREATE TABLE "foodMenu1" (
+      "id" INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
+      "name" TEXT NOT NULL,
+      "price" REAL NOT NULL,
+      "type" TEXT NOT NULL,
+      "availability" INTEGER NOT NULL,
+      "manager_id" INTEGER NOT NULL,
+      "food_quantity" INTEGER NOT NULL
+      )
+      ''');
+    await db.execute('''
+      CREATE TABLE "lastOrder" (
+      "id" INTEGER  NOT NULL PRIMARY KEY,
+      "name" TEXT NOT NULL,
+      "price" REAL NOT NULL,
+      "food_quantity" INTEGER NOT NULL,
+      "total_price" REAL NOT NULL,
+      "table_id" INTEGER NOT NULL
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE "cartMenu1" (
+      "id" INTEGER NOT NULL,
+      "name" TEXT NOT NULL,
+      "price" REAL NOT NULL,
+      "food_quantity" INTEGER NOT NULL,
+      "total_price" REAL NOT NULL,
+      "table_id" INTEGER NOT NULL
+      )
+      ''');
   }
 
   _onCreate(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE "lastOrder" (
+      "id" INTEGER  NOT NULL PRIMARY KEY,
+      "name" TEXT NOT NULL,
+      "price" REAL NOT NULL,
+      "food_quantity" INTEGER NOT NULL,
+      "total_price" REAL NOT NULL,
+      "table_id" INTEGER NOT NULL
+      )
+    ''');
     await db.execute('''
       CREATE TABLE "foodMenu1" (
       "id" INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
