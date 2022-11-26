@@ -74,7 +74,6 @@ Future<int> printTableLogs() async {
   return 0;
 }
 
-
 Future<int> deleteFood(Yemekler targetFood) async {
   // delete a single product
   await sqlDB.deleteData("DELETE FROM 'foodMenu1' WHERE name = '${targetFood.foodName}'");
@@ -83,8 +82,10 @@ Future<int> deleteFood(Yemekler targetFood) async {
 }
 
 class _MenuViewState extends State<MenuView> {
+  TextEditingController tableID = TextEditingController();
   bool isReadOnly = false;
   String? _error;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,7 +126,7 @@ class _MenuViewState extends State<MenuView> {
           itemBuilder: (context, index) {
             bool available = true;
             Yemekler yemek = corba[index];
-            if (yemek.availability == 0){
+            if (yemek.availability == 0) {
               available = false;
             }
             return listView(index, corba, available);
@@ -146,7 +147,7 @@ class _MenuViewState extends State<MenuView> {
           itemBuilder: (context, index) {
             bool available = true;
             Yemekler yemek = salata[index];
-            if (yemek.availability == 0){
+            if (yemek.availability == 0) {
               available = false;
             }
             return listView(index, salata, available);
@@ -167,7 +168,7 @@ class _MenuViewState extends State<MenuView> {
           itemBuilder: (context, index) {
             bool available = true;
             Yemekler yemek = zeytin[index];
-            if (yemek.availability == 0){
+            if (yemek.availability == 0) {
               available = false;
             }
             return listView(index, zeytin, available);
@@ -188,7 +189,7 @@ class _MenuViewState extends State<MenuView> {
           itemBuilder: (context, index) {
             bool available = true;
             Yemekler yemek = ara[index];
-            if (yemek.availability == 0){
+            if (yemek.availability == 0) {
               available = false;
             }
             return listView(index, ara, available);
@@ -209,7 +210,7 @@ class _MenuViewState extends State<MenuView> {
           itemBuilder: (context, index) {
             bool available = true;
             Yemekler yemek = ana[index];
-            if (yemek.availability == 0){
+            if (yemek.availability == 0) {
               available = false;
             }
             return listView(index, ana, available);
@@ -230,7 +231,7 @@ class _MenuViewState extends State<MenuView> {
           itemBuilder: (context, index) {
             bool available = true;
             Yemekler yemek = icecekler[index];
-            if (yemek.availability == 0){
+            if (yemek.availability == 0) {
               available = false;
             }
             return listView(index, icecekler, available);
@@ -251,7 +252,7 @@ class _MenuViewState extends State<MenuView> {
           itemBuilder: (context, index) {
             bool available = true;
             Yemekler yemek = tatlilar[index];
-            if (yemek.availability == 0){
+            if (yemek.availability == 0) {
               available = false;
             }
             return listView(index, tatlilar, available);
@@ -288,7 +289,7 @@ class _MenuViewState extends State<MenuView> {
                     if (additionResponse == 1) {
                       print("added quantity");
                     } else {
-                      print("didn't aal");
+                      print("didn't add");
                     }
                     int quantity = await getQuantity(yemek);
                     await loadDataFromDB();
@@ -303,7 +304,7 @@ class _MenuViewState extends State<MenuView> {
                     // await printTableLogs();
                   } else {
                     setState(() {
-                      _error = "Lütfen masa numarasını seçiniz";
+                      _error = "Lütfen bir masaya oturun!";
                     });
                   }
                   // await loadDataFromDB();
@@ -337,6 +338,7 @@ class _MenuViewState extends State<MenuView> {
                   height: widget.phoneHeight * 0.04,
                   width: widget.phoneWidth * 0.2,
                   child: TextField(
+                    controller: tableID,
                     readOnly: isReadOnly,
                     maxLines: 1,
                     decoration: const InputDecoration(
@@ -351,10 +353,26 @@ class _MenuViewState extends State<MenuView> {
                 child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        isReadOnly = true;
-                        setState(() {
-                          _error = "";
-                        });
+                        double tableId;
+                        try {
+                          tableId = double.parse(tableID.text);
+                        } catch (e) {
+                          setState(() {
+                            _error = "Lütfen geçerli bir karakter girin!";
+                          });
+                          return;
+                        }
+                        if (tableId > 0 && tableId < 200 ) {
+                          isReadOnly = true;
+                          setState(() {
+                            _error = "";
+                          });
+                        } else {
+                          setState(() {
+                            _error = "Lütfen geçerli bir masa numarası seçin!";
+                          });
+                        }
+
                       });
                     },
                     child: const Text("Otur", style: TextStyle(fontSize: 20))),

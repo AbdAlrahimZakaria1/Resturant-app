@@ -3,6 +3,7 @@ import 'package:odev/data/menu.dart';
 import 'package:odev/view/menu_view/menu_view.dart';
 import '../../DB/sqlDB.dart';
 import '../yemek_pasife_al_view/yemek_pasife_al_view.dart';
+import 'package:validators/validators.dart';
 
 class YemekEkleView extends StatefulWidget {
   final double phoneWidth, phoneHeight;
@@ -20,12 +21,29 @@ Future<int> addFood(foodName, foodPrice, foodType) async {
   return 0;
 }
 
+bool foodNameCheck(String str) {
+  List stringList = str.split(' ');
+  for (int i = 0; i < stringList.length; i++) {
+    if (stringList[i] == null || stringList[i].isEmpty || !isUppercase(stringList[i][0])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool isNumeric(String s) {
+  if (s == null) {
+    return false;
+  }
+  return double.tryParse(s) != null;
+}
+
 class _YemekEkleViewState extends State<YemekEkleView> {
   TextEditingController foodName = new TextEditingController();
   TextEditingController foodPrice = new TextEditingController();
   SqlDB sqlDB = SqlDB();
   String dropdownValue = 'Çorba';
-  bool isChecked = false;
+  bool confBtnIsChecked = false;
   String? _error;
 
   @override
@@ -163,10 +181,10 @@ class _YemekEkleViewState extends State<YemekEkleView> {
           child: Checkbox(
             activeColor: Colors.blue,
             checkColor: Colors.white,
-            value: isChecked,
+            value: confBtnIsChecked,
             onChanged: (bool? value) {
               setState(() {
-                isChecked = value!;
+                confBtnIsChecked = value!;
               });
             },
           ),
@@ -187,31 +205,61 @@ class _YemekEkleViewState extends State<YemekEkleView> {
       alignment: Alignment.centerLeft,
       child: ElevatedButton(
           onPressed: () async {
-            if (isChecked) {
-              if (double.parse(foodPrice.text) > 0) {
-                try {
-                  await addFood(foodName.text, double.parse(foodPrice.text), dropdownValue);
-                  await loadDataFromDB();
-                  await printTableLogs();
-                  await addPassiveList();
-                  setState(() {
-                    _error = "";
-                  });
-                } catch (e) {
-                  setState(() {
-                    _error = "Lutfen yukaridaki bilgileri duzeltin";
-                  });
-                }
-              }else{
-                setState(() {
-                  _error = "Lutfen gecerli yemek fiyati giriniz";
-                });
-              }
-            } else if (!isChecked) {
-                setState(() {
-                  _error = "Lutfen onaylama butonu tiklayiniz";
-                });
-              }
+            if(!confBtnIsChecked && foodName.text.isEmpty && foodPrice.text.isEmpty){
+              setState(() {
+                _error = "Lütfen geçerli alanları doldurun!";
+              });
+              return;
+            }
+            if (!foodNameCheck(foodName.text)){
+              setState(() {
+                _error = "Lütfen eklenecek yemek adını doğru girin!";
+              });
+            return;
+            }
+            if(foodName.text.isNotEmpty && foodName.text.length > 20){
+              setState(() {
+                _error = "Lütfen daha kısa bir yemek adı girin!";
+              });
+              return;
+            }
+            if(foodPrice.text.isEmpty){
+              setState(() {
+                _error = "Lütfen yemek fiyatını girin!";
+              });
+              return;
+            }
+            if(!isNumeric(foodPrice.text)){
+              setState(() {
+                _error = "Lütfen geçerli bir karakter girin!";
+              });
+              return;
+            }
+            if(double.parse(foodPrice.text) < 0){
+              setState(() {
+                _error = "Lütfen yemek fiyatını pozitif sayı olarak girin!";
+              });
+              return;
+            }
+            if(foodPrice.text.length > 6){
+              setState(() {
+                _error = "Lütfen 6 karakterden fazla girmeyin!";
+              });
+              return;
+            }
+            if(!confBtnIsChecked){
+              setState(() {
+                _error = "Lütfen yemek ekleme işlemini onaylayın!";
+              });
+              return;
+            }
+            setState(() {
+              _error = "";
+            });
+            await addFood(foodName.text, double.parse(foodPrice.text), dropdownValue);
+            await loadDataFromDB();
+            await printTableLogs();
+            await addPassiveList();
           },
           style: ElevatedButton.styleFrom(fixedSize: Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),
           child: const Text("Yemek Ekle", style: TextStyle(fontSize: 25))),

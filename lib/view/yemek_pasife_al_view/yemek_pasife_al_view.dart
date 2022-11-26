@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:odev/view/menu_view/menu_view.dart';
+import 'package:validators/validators.dart';
 
 import '../../data/menu.dart';
 
@@ -46,7 +47,7 @@ Future<int> makeFoodPassive(foodName, adminName) async {
 }
 
 class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
-  bool isChecked = false;
+  bool confBtnisChecked = false;
   TextEditingController adminName = TextEditingController();
   String? _error;
 
@@ -145,10 +146,10 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
           child: Checkbox(
             activeColor: Colors.blue,
             checkColor: Colors.white,
-            value: isChecked,
+            value: confBtnisChecked,
             onChanged: (bool? value) {
               setState(() {
-                isChecked = value!;
+                confBtnisChecked = value!;
               });
             },
           ),
@@ -169,7 +170,13 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
       padding: EdgeInsets.only(top: widget.phoneHeight * 0.01),
       child: ElevatedButton(
           onPressed: () async {
-            if (isChecked) {
+            if (!confBtnisChecked && adminName.text.isEmpty) {
+              setState(() {
+                _error = "Lütfen geçerli alanları doldurun!";
+              });
+              return;
+            }
+            if (confBtnisChecked) {
               if (await makeFoodPassive(dropdownPassiveValue, adminName.text) == 1) {
                 await printTableLogs();
                 setState(() {
@@ -178,14 +185,14 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
                 firstTime = true;
                 await addPassiveList();
                 await loadDataFromDB();
-              }else{
+              } else {
                 setState(() {
-                  _error = "Lutfen gecerli admin ismi giriniz";
+                  _error = "Lütfen yönetici adını doğru şekilde girin!";
                 });
               }
-            }else{
+            } else {
               setState(() {
-                _error = "Lutfen onaylama butonu tiklayiniz";
+                _error = "Lütfen pasife alma işlemini onaylayın!";
               });
             }
           },
@@ -240,6 +247,7 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
       ),
     );
   }
+
   Container errorBox() {
     return Container(
       alignment: Alignment.centerLeft,
