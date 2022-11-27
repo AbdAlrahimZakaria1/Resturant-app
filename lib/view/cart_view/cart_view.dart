@@ -32,6 +32,10 @@ Future<int> removeQuantity(Yemekler targetFood) async {
   await setQuantity(quantity, targetFood);
   return 0;
 }
+dynamic tableId = '';
+bool isReadOnly = false;
+TextEditingController tableID = TextEditingController();
+dynamic table = '';
 
 class _CartViewState extends State<CartView> {
   String? _error;

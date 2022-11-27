@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:odev/data/menu.dart';
 
+import '../cart_view/cart_view.dart';
+
 class MenuView extends StatefulWidget {
   final double phoneWidth, phoneHeight;
 
@@ -82,8 +84,6 @@ Future<int> deleteFood(Yemekler targetFood) async {
 }
 
 class _MenuViewState extends State<MenuView> {
-  TextEditingController tableID = TextEditingController();
-  bool isReadOnly = false;
   String? _error;
 
   @override
@@ -322,6 +322,7 @@ class _MenuViewState extends State<MenuView> {
   }
 
   Padding selectingTable() {
+    String a = " d";
     return Padding(
         padding: EdgeInsets.only(bottom: widget.phoneHeight * 0.01),
         child: Column(children: [
@@ -336,14 +337,18 @@ class _MenuViewState extends State<MenuView> {
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   height: widget.phoneHeight * 0.04,
-                  width: widget.phoneWidth * 0.2,
+                  width: widget.phoneWidth * 0.15,
                   child: TextField(
+                    textAlign: TextAlign.center,
                     controller: tableID,
                     readOnly: isReadOnly,
                     maxLines: 1,
-                    decoration: const InputDecoration(
-                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(5.0),
+                      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                      enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                      hintText: table.toString(),
+                      hintStyle: const TextStyle(fontSize: 20.0, color: Colors.black87),
                     ),
                   ),
                 ),
@@ -353,16 +358,16 @@ class _MenuViewState extends State<MenuView> {
                 child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        double tableId;
                         try {
-                          tableId = double.parse(tableID.text);
+                          tableId = int.parse(tableID.text);
                         } catch (e) {
                           setState(() {
                             _error = "Lütfen geçerli bir karakter girin!";
                           });
                           return;
                         }
-                        if (tableId > 0 && tableId < 200 ) {
+                        if (tableId! > 0 && tableId! < 200) {
+                          table = tableId;
                           isReadOnly = true;
                           setState(() {
                             _error = "";
@@ -372,7 +377,6 @@ class _MenuViewState extends State<MenuView> {
                             _error = "Lütfen geçerli bir masa numarası seçin!";
                           });
                         }
-
                       });
                     },
                     child: const Text("Otur", style: TextStyle(fontSize: 20))),
