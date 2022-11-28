@@ -5,7 +5,7 @@ import 'package:odev/view/yemek_pasife_al_view/yemek_pasife_al_view.dart';
 import 'package:odev/view_model/bottom_nav_bar/bottom_nav_bar_model.dart';
 import 'data/menu.dart';
 
-void main() async{
+void main() {
   runApp(const MyApp());
   calculateCartPrice();
   loadDataFromDB();
@@ -25,9 +25,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
+        initialRoute: '/Menu',
         routes: {
-        '/':(context) => const Values(),
+        '/Menu':(context) => const Values(),
         },
     );
   }
@@ -41,9 +41,9 @@ class Values extends StatelessWidget {
     final double phoneHeight = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/Menu',
       routes: {
-        '/':(context) => MainBottomNavBar(phoneWidth, phoneHeight, 0),
+        '/Menu':(context) => MainBottomNavBar(phoneWidth, phoneHeight, 0),
       },
     );
   }

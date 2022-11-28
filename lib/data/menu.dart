@@ -12,7 +12,7 @@ SqlDB sqlDB = SqlDB();
 
 loadDataFromDB() async {
   corba = [
-    // Yemekler("Çorba", "Mercimek Çorbası", 12.00, 0),
+    // Yemekler("Çorba", "Mercimek Çorbası", 12.00, 0, 0),
     // Yemekler("Çorba", "Tarhana Çorbası", 12.00, 0),
     // Yemekler("Çorba", "Domates Çorbası", 12.00, 0),
   ];

@@ -86,34 +86,39 @@ Future<int> deleteFood(Yemekler targetFood) async {
 class _MenuViewState extends State<MenuView> {
   String? _error;
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text("MENU"),
           automaticallyImplyLeading: false,
         ),
-        body: Padding(
-          padding: EdgeInsets.only(top: widget.phoneHeight * 0.03, left: widget.phoneWidth * 0.03),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              "Aşağıdaki alana masa numaranızı giriniz:",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            selectingTable(),
-            Expanded(
-              child: ListView(physics: BouncingScrollPhysics(), children: [
-                corbaListView(),
-                salataListView(),
-                zeytinListView(),
-                araListView(),
-                anaListView(),
-                iceceklerListView(),
-                tatlilarListView(),
+        body: Center(
+            child: FutureBuilder(
+          future: loadDataFromDB(),
+          builder: (context, snapshot) {
+            return Padding(
+              padding: EdgeInsets.only(top: widget.phoneHeight * 0.03, left: widget.phoneWidth * 0.03),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text(
+                  "Aşağıdaki alana masa numaranızı giriniz:",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                selectingTable(),
+                Expanded(
+                  child: ListView(physics: BouncingScrollPhysics(), children: [
+                    corbaListView(),
+                    salataListView(),
+                    zeytinListView(),
+                    araListView(),
+                    anaListView(),
+                    iceceklerListView(),
+                    tatlilarListView(),
+                  ]),
+                ),
               ]),
-            ),
-          ]),
-        ));
+            );
+          },
+        )));
   }
 
   Column corbaListView() {
@@ -322,7 +327,6 @@ class _MenuViewState extends State<MenuView> {
   }
 
   Padding selectingTable() {
-    String a = " d";
     return Padding(
         padding: EdgeInsets.only(bottom: widget.phoneHeight * 0.01),
         child: Column(children: [
