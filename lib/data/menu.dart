@@ -87,6 +87,7 @@ loadDataFromDB() async {
   for (int i = 0; i < checkoutData.length; i++) {
     checkoutOrderList.add(Yemekler(checkoutData[i]['name'], checkoutData[i]['name'], checkoutData[i]['price'], checkoutData[i]['food_quantity'], 1));
   }
+  print("loaded data from DB");
 }
 
 List cartList = [];

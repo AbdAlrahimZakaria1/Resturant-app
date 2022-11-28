@@ -94,7 +94,7 @@ class _MenuViewState extends State<MenuView> {
         ),
         body: Center(
             child: FutureBuilder(
-          future: loadDataFromDB(),
+          future: calculateCartPrice(),
           builder: (context, snapshot) {
             return Padding(
               padding: EdgeInsets.only(top: widget.phoneHeight * 0.03, left: widget.phoneWidth * 0.03),
