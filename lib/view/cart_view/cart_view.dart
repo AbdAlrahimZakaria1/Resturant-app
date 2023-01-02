@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:odev/DB/sqlDB.dart';
 import 'package:odev/view/menu_view/menu_view.dart';
 import '../../data/menu.dart';
 import '../last_orders_view/last_order_view.dart';
+import '../payment_menu/payment_menu_view.dart';
 
 class CartView extends StatefulWidget {
   final double phoneWidth, phoneHeight;
@@ -13,16 +15,16 @@ class CartView extends StatefulWidget {
 }
 
 Future<int> updateCartQuantity(Yemekler targetFood) async {
-  List<Map> food = await sqlDB.readData("SELECT * FROM 'foodMenu1' WHERE name = '${targetFood.foodName}'");
-  await sqlDB.deleteData("DELETE FROM 'cartMenu1' WHERE id = ${food[0]['id']}");
+  List<Map> food = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE food_name = '${targetFood.foodName}'");
+  await sqlDB.deleteData("DELETE FROM $CART_MENU WHERE food_id = ${food[0]['id']}");
   int quantity = await getQuantity(targetFood);
   if (quantity > 0) {
-    await sqlDB.insertData("INSERT INTO 'cartMenu1' "
-        "('id', 'name', 'price', 'food_quantity', 'total_price', 'table_id') "
-        "VALUES (${food[0]['id']}, '${food[0]['name']}', '${food[0]['price']}', '$quantity' , ${quantity * food[0]['price']}, 402)");
+    await sqlDB.insertData("INSERT INTO $CART_MENU "
+        "('food_id', 'food_name', 'food_price', 'food_quantity', 'total_price')"
+        "VALUES (${food[0]['id']}, '${food[0]['food_name']}', '${food[0]['food_price']}', '$quantity' , ${quantity * food[0]['food_price']})");
   }
   if (quantity == 0) {
-    await sqlDB.deleteData("DELETE FROM 'cartMenu1' WHERE id = ${food[0]['id']}");
+    await sqlDB.deleteData("DELETE FROM $CART_MENU WHERE food_id = ${food[0]['id']}");
   }
   return 0;
 }
@@ -78,6 +80,7 @@ class _CartViewState extends State<CartView> {
                       _error = "Lütfen ürün seçiniz";
                     });
                   }
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentMenuView(widget.phoneWidth, widget.phoneHeight)));
                 },
                 style: ElevatedButton.styleFrom(fixedSize: Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),
                 child: const Text("Siparis Ver", style: TextStyle(fontSize: 25))),

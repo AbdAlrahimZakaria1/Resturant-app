@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odev/DB/sqlDB.dart';
 import 'package:odev/data/menu.dart';
 
 import '../cart_view/cart_view.dart';
@@ -15,7 +16,7 @@ class MenuView extends StatefulWidget {
 double cartFullPrice = 0;
 
 Future<int> getQuantity(Yemekler targetFood) async {
-  List<Map> foodQuantity = await sqlDB.readData("SELECT food_quantity FROM 'foodMenu1' WHERE name = '${targetFood.foodName}'");
+  List<Map> foodQuantity = await sqlDB.readData("SELECT food_quantity FROM $FOOD_MENU WHERE food_name = '${targetFood.foodName}'");
   print("Got quantity in getter: ${foodQuantity[0]['food_quantity']}");
   return foodQuantity[0]['food_quantity'];
 }
@@ -24,13 +25,13 @@ Future<int> setQuantity(int quantity, Yemekler targetFood) async {
   if (quantity < 0) {
     return 0;
   }
-  await sqlDB.updateData("UPDATE 'foodMenu1' SET 'food_quantity' = '$quantity' WHERE name = '${targetFood.foodName}'");
+  await sqlDB.updateData("UPDATE $FOOD_MENU SET 'food_quantity' = '$quantity' WHERE food_name = '${targetFood.foodName}'");
   print("set quantity: $quantity");
   return 0;
 }
 
 Future<int> addQuantity(Yemekler targetFood) async {
-  List<Map> food = await sqlDB.readData("SELECT * FROM 'foodMenu1' WHERE name = '${targetFood.foodName}'");
+  List<Map> food = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE food_name = '${targetFood.foodName}'");
   if (food[0]['availability'] == 1) {
     int quantity = await getQuantity(targetFood) + 1;
     await setQuantity(quantity, targetFood);
@@ -42,7 +43,7 @@ Future<int> addQuantity(Yemekler targetFood) async {
 }
 
 Future<double> calculateCartPrice() async {
-  List<Map> foodQuantityPrice = await sqlDB.readData("SELECT total_price FROM 'cartMenu1'");
+  List<Map> foodQuantityPrice = await sqlDB.readData("SELECT total_price FROM $CART_MENU");
   cartFullPrice = 0;
   for (int i = 0; i < foodQuantityPrice.length; i++) {
     cartFullPrice += foodQuantityPrice[i]['total_price'];
@@ -51,26 +52,26 @@ Future<double> calculateCartPrice() async {
 }
 
 Future<int> addToCart(Yemekler targetFood) async {
-  List<Map> food = await sqlDB.readData("SELECT * FROM 'foodMenu1' WHERE name = '${targetFood.foodName}'");
-  await sqlDB.deleteData("DELETE FROM 'cartMenu1' WHERE id = ${food[0]['id']}");
-  await sqlDB.insertData("INSERT INTO 'cartMenu1' "
-      "('id', 'name', 'price', 'food_quantity', 'total_price', 'table_id') "
-      "VALUES (${food[0]['id']}, '${food[0]['name']}', '${food[0]['price']}', '${food[0]['food_quantity']}' , "
-      "${food[0]['food_quantity'] * food[0]['price']}, 402)");
+  List<Map> food = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE food_name = '${targetFood.foodName}'");
+  await sqlDB.deleteData("DELETE FROM $CART_MENU WHERE food_id = ${food[0]['id']}");
+  await sqlDB.insertData("INSERT INTO $CART_MENU "
+      "('food_id', 'food_name', 'food_price', 'food_quantity', 'total_price') "
+      "VALUES (${food[0]['id']}, '${food[0]['food_name']}', '${food[0]['food_price']}', '${food[0]['food_quantity']}' , "
+      "${food[0]['food_quantity'] * food[0]['food_price']})");
   return 0;
 }
 
 // TODO use table names
 Future<int> printTableLogs() async {
-  List<Map> foodResponse = await sqlDB.readData("SELECT * FROM 'foodMenu1'");
+  List<Map> foodResponse = await sqlDB.readData("SELECT * FROM $FOOD_MENU");
   print("Menu");
   print(foodResponse);
 
-  List<Map> cartResponse = await sqlDB.readData("SELECT * FROM 'cartMenu1'");
+  List<Map> cartResponse = await sqlDB.readData("SELECT * FROM $CART_MENU");
   print("Cart");
   print(cartResponse);
 
-  List<Map> checkoutResponse = await sqlDB.readData("SELECT * FROM 'lastOrder'");
+  List<Map> checkoutResponse = await sqlDB.readData("SELECT * FROM $LAST_ORDER_MENU");
   print("Checkout");
   print(checkoutResponse);
   return 0;
@@ -78,8 +79,8 @@ Future<int> printTableLogs() async {
 
 Future<int> deleteFood(Yemekler targetFood) async {
   // delete a single product
-  await sqlDB.deleteData("DELETE FROM 'foodMenu1' WHERE name = '${targetFood.foodName}'");
-  // await sqlDB.deleteData("DELETE FROM 'cartMenu1' WHERE name = '${targetFood.foodName}'");
+  await sqlDB.deleteData("DELETE FROM $FOOD_MENU WHERE food_name = '${targetFood.foodName}'");
+  // await sqlDB.deleteData("DELETE FROM 'cartMenu1' WHERE food_name = '${targetFood.foodName}'");
   return 0;
 }
 
@@ -289,6 +290,7 @@ class _MenuViewState extends State<MenuView> {
               child: ElevatedButton(
                 onPressed: () async {
                   if (isReadOnly) {
+                    // await deleteFood(yemek);
                     await loadDataFromDB();
                     int additionResponse = await addQuantity(yemek);
                     if (additionResponse == 1) {

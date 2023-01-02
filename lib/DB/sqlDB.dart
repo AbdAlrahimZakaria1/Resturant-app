@@ -1,9 +1,10 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-String FOOD_MENU = 'foodMenu1';
-String CART_MENU = 'cartMenu1';
-String LAST_ORDER_MENU = 'lastOrder';
+String FOOD_MENU = 'food_menu';
+String CART_MENU = 'cart_menu';
+String LAST_ORDER_MENU = 'last_order';
+String FOOD_CATEGORY = 'food_category';
 
 class SqlDB {
   static Database? _db;
@@ -20,82 +21,95 @@ class SqlDB {
   initialDB() async {
     String databasePath = await getDatabasesPath();
     String path = join(databasePath, 'lypo.db');
-    Database myDB = await openDatabase(path,
-        onCreate: _onCreate, version: 26, onUpgrade: _onUpgrade);
+    Database myDB = await openDatabase(path, onCreate: _onCreate, version: 29, onUpgrade: _onUpgrade);
     return myDB;
   }
 
-  _onUpgrade(Database db, int oldVersion, int newVersion) async{
+  _onUpgrade(Database db, int oldVersion, int newVersion) async {
     print("_onUpgrade ==========");
-    // if (oldVersion < newVersion){
-    //   db.execute("ALTER TABLE 'foodMenu1' ADD COLUMN 'manager_id' INTEGER");
-    // }
-    // db.execute("alter table 'cartMenu' add column 'food_quantity' INTEGER");
-    await db.execute('''
-      CREATE TABLE "foodMenu1" (
-      "id" INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
-      "name" TEXT NOT NULL,
-      "price" REAL NOT NULL,
-      "type" TEXT NOT NULL,
-      "availability" INTEGER NOT NULL,
-      "manager_id" INTEGER NOT NULL,
-      "food_quantity" INTEGER NOT NULL
-      )
-      ''');
-    await db.execute('''
-      CREATE TABLE "lastOrder" (
-      "id" INTEGER  NOT NULL PRIMARY KEY,
-      "name" TEXT NOT NULL,
-      "price" REAL NOT NULL,
-      "food_quantity" INTEGER NOT NULL,
-      "total_price" REAL NOT NULL,
-      "table_id" INTEGER NOT NULL
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE "cartMenu1" (
-      "id" INTEGER NOT NULL,
-      "name" TEXT NOT NULL,
-      "price" REAL NOT NULL,
-      "food_quantity" INTEGER NOT NULL,
-      "total_price" REAL NOT NULL,
-      "table_id" INTEGER NOT NULL
-      )
-      ''');
+    // await db.execute('''
+    //   CREATE TABLE $FOOD_MENU (
+    //   "id" INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
+    //   "food_name" TEXT NOT NULL,
+    //   "food_price" REAL NOT NULL,
+    //   "food_quantity" INTEGER NOT NULL,
+    //   "category_id" INTEGER NOT NULL,
+    //   "availability" INTEGER NOT NULL,
+    //   "manager_id" INTEGER NOT NULL
+    //   )
+    //   ''');
+    // await db.execute('''
+    //   CREATE TABLE $CART_MENU (
+    //   "food_id" INTEGER NOT NULL,
+    //   "food_name" TEXT NOT NULL,
+    //   "food_price" REAL NOT NULL,
+    //   "food_quantity" INTEGER NOT NULL,
+    //   "total_price" REAL NOT NULL
+    //   )
+    //   ''');
+    // await db.execute('''
+    //   CREATE TABLE $LAST_ORDER_MENU (
+    //   "food_id" INTEGER  NOT NULL,
+    //   "food_name" TEXT NOT NULL,
+    //   "food_price" REAL NOT NULL,
+    //   "food_quantity" INTEGER NOT NULL,
+    //   "total_price" REAL NOT NULL
+    //   )
+    // ''');
+    // await db.execute('''
+    //   CREATE TABLE $FOOD_CATEGORY (
+    //   "category_id" INTEGER NOT NULL,
+    //   "category_name" TEXT NOT NULL
+    //   )
+    // ''');
+    // await db.execute('''
+    //   INSERT INTO $FOOD_CATEGORY (category_id, category_name)
+    //   VALUES (101, "Corba"),
+    //          (102, "Salata"),
+    //          (103, "Zeytinyağlılar"),
+    //          (104, "Ara Sıcaklar"),
+    //          (105, "Ana Yemekler"),
+    //          (106, "İçecekler"),
+    //          (107, "Tatlılar")
+    // ''');
   }
 
   _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE "lastOrder" (
-      "id" INTEGER  NOT NULL PRIMARY KEY,
-      "name" TEXT NOT NULL,
-      "price" REAL NOT NULL,
+      CREATE TABLE $FOOD_MENU (
+      "id" INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
+      "food_name" TEXT NOT NULL,
+      "food_price" REAL NOT NULL,
       "food_quantity" INTEGER NOT NULL,
-      "total_price" REAL NOT NULL,
-      "table_id" INTEGER NOT NULL
+      "category_id" INTEGER NOT NULL,
+      "availability" INTEGER NOT NULL,
+      "manager_id" INTEGER NOT NULL
+      )
+      ''');
+    await db.execute('''
+      CREATE TABLE $CART_MENU (
+      "food_id" INTEGER NOT NULL,
+      "food_name" TEXT NOT NULL,
+      "food_price" REAL NOT NULL,
+      "food_quantity" INTEGER NOT NULL,
+      "total_price" REAL NOT NULL
+      )
+      ''');
+    await db.execute('''
+      CREATE TABLE $LAST_ORDER_MENU (
+      "food_id" INTEGER  NOT NULL,
+      "food_name" TEXT NOT NULL,
+      "food_price" REAL NOT NULL,
+      "food_quantity" INTEGER NOT NULL,
+      "total_price" REAL NOT NULL
       )
     ''');
     await db.execute('''
-      CREATE TABLE "foodMenu1" (
-      "id" INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
-      "name" TEXT NOT NULL,
-      "price" REAL NOT NULL,
-      "type" TEXT NOT NULL,
-      "availability" INTEGER NOT NULL,
-      "manager_id" INTEGER NOT NULL,
-      "food_quantity" INTEGER NOT NULL
+      CREATE TABLE $FOOD_CATEGORY (
+      "category_id" INTEGER NOT NULL,
+      "category_name" TEXT NOT NULL
       )
-      ''');
-    await db.execute('''
-      CREATE TABLE "cartMenu1" (
-      "id" INTEGER NOT NULL,
-      "name" TEXT NOT NULL,
-      "price" REAL NOT NULL,
-      "food_quantity" INTEGER NOT NULL,
-      "total_price" REAL NOT NULL,
-      "table_id" INTEGER NOT NULL
-      )
-      ''');
+    ''');
     print("_onCreate ==========");
   }
 

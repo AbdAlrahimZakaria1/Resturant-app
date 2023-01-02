@@ -1,11 +1,11 @@
 import 'package:odev/DB/sqlDB.dart';
 
 class Yemekler {
-  int quantity, availability;
+  int quantity, categoryID, availability;
   double foodPrice;
-  String foodName, foodCategory;
+  String foodName;
 
-  Yemekler(this.foodCategory, this.foodName, this.foodPrice, this.quantity, this.availability);
+  Yemekler(this.foodName, this.foodPrice, this.quantity, this.categoryID, this.availability);
 }
 
 SqlDB sqlDB = SqlDB();
@@ -55,37 +55,35 @@ loadDataFromDB() async {
     // Yemekler("Tatlılar", "Dondurma", 10.00, 0),
     // Yemekler("Tatlılar", "Meyve Tabağı", 15.00, 0),
   ];
-  List<Map> menuData = await sqlDB.readData("SELECT * FROM 'foodMenu1'");
+
+
+  List<Map> menuData = await sqlDB.readData("SELECT * FROM $FOOD_MENU");
   cartList = [];
   for (int i = 0; i < menuData.length; i++) {
-    if (menuData[i]['type'] == 'Çorba') {
-      corba.add(Yemekler("Çorba", menuData[i]['name'], menuData[i]['price'], menuData[i]['food_quantity'], menuData[i]['availability']));
-    } else if (menuData[i]['type'] == 'Salata') {
-      salata.add(Yemekler("Salata", menuData[i]['name'], menuData[i]['price'], menuData[i]['food_quantity'], menuData[i]['availability']));
-    } else if (menuData[i]['type'] == 'Zeytinyağlı') {
-      zeytin.add(Yemekler(
-          "Zeytinyağlılar", menuData[i]['name'], menuData[i]['price'], menuData[i]['food_quantity'], menuData[i]['availability']));
-    } else if (menuData[i]['type'] == 'Ara Sıcak') {
-      ara.add(
-          Yemekler("Ara Sıcaklar", menuData[i]['name'], menuData[i]['price'], menuData[i]['food_quantity'], menuData[i]['availability']));
-    } else if (menuData[i]['type'] == 'Ana Yemek') {
-      ana.add(
-          Yemekler("Ana Yemekler", menuData[i]['name'], menuData[i]['price'], menuData[i]['food_quantity'], menuData[i]['availability']));
-    } else if (menuData[i]['type'] == 'İçecek') {
-      icecekler.add(
-          Yemekler("İçecekler", menuData[i]['name'], menuData[i]['price'], menuData[i]['food_quantity'], menuData[i]['availability']));
-    } else if (menuData[i]['type'] == 'Tatlı') {
-      tatlilar
-          .add(Yemekler("Tatlılar", menuData[i]['name'], menuData[i]['price'], menuData[i]['food_quantity'], menuData[i]['availability']));
+    if (menuData[i]['category_id'] == 101) {
+      corba.add(Yemekler(menuData[i]['food_name'], menuData[i]['food_price'], menuData[i]['food_quantity'], 101, menuData[i]['availability']));
+    } else if (menuData[i]['category_id'] == 102) {
+      salata.add(Yemekler(menuData[i]['food_name'], menuData[i]['food_price'], menuData[i]['food_quantity'], 102, menuData[i]['availability']));
+    } else if (menuData[i]['category_id'] == 103) {
+      zeytin.add(Yemekler(menuData[i]['food_name'], menuData[i]['food_price'], menuData[i]['food_quantity'], 103, menuData[i]['availability']));
+    } else if (menuData[i]['category_id'] == 104) {
+      ara.add(Yemekler(menuData[i]['food_name'], menuData[i]['food_price'], menuData[i]['food_quantity'], 104, menuData[i]['availability']));
+    } else if (menuData[i]['category_id'] == 105) {
+      ana.add(Yemekler(menuData[i]['food_name'], menuData[i]['food_price'], menuData[i]['food_quantity'], 105, menuData[i]['availability']));
+    } else if (menuData[i]['category_id'] == 106) {
+      icecekler.add(Yemekler(menuData[i]['food_name'], menuData[i]['food_price'], menuData[i]['food_quantity'], 106, menuData[i]['availability']));
+    } else if (menuData[i]['category_id'] == 107) {
+      tatlilar.add(Yemekler(menuData[i]['food_name'], menuData[i]['food_price'], menuData[i]['food_quantity'], 107, menuData[i]['availability']));
     }
-    if (menuData[i]['food_quantity'] > 0){
-      cartList.add(Yemekler(menuData[i]['name'], menuData[i]['name'], menuData[i]['price'], menuData[i]['food_quantity'], menuData[i]['availability']));
+    if (menuData[i]['food_quantity'] > 0) {
+      cartList
+          .add(Yemekler(menuData[i]['food_name'], menuData[i]['food_price'], menuData[i]['food_quantity'], menuData[i]['category_id'], menuData[i]['availability']));
     }
   }
-  List<Map> checkoutData = await sqlDB.readData("SELECT * FROM 'lastOrder'");
+  List<Map> checkoutData = await sqlDB.readData("SELECT * FROM $LAST_ORDER_MENU");
   checkoutOrderList = [];
   for (int i = 0; i < checkoutData.length; i++) {
-    checkoutOrderList.add(Yemekler(checkoutData[i]['name'], checkoutData[i]['name'], checkoutData[i]['price'], checkoutData[i]['food_quantity'], 1));
+    checkoutOrderList.add(Yemekler(checkoutData[i]['food_name'], checkoutData[i]['food_price'], checkoutData[i]['food_quantity'], -1, 1));
   }
   print("loaded data from DB");
 }

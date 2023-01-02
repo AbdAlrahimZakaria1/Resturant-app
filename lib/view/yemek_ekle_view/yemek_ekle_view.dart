@@ -14,10 +14,11 @@ class YemekEkleView extends StatefulWidget {
   State<YemekEkleView> createState() => _YemekEkleViewState();
 }
 
-Future<int> addFood(foodName, foodPrice, foodType) async {
-  int insertResponse = await sqlDB.insertData("INSERT INTO 'foodMenu1' "
-      "('name', 'price', 'type', 'availability', 'manager_id', 'food_quantity') "
-      "VALUES ('$foodName', '$foodPrice', '$foodType', '1' , 101, 0)");
+Future<int> addFood(foodName, foodPrice, category_name) async {
+  List<Map> categoryID = await sqlDB.readData("SELECT * FROM $FOOD_CATEGORY WHERE category_name = '$category_name'");
+  int insertResponse = await sqlDB.insertData("INSERT INTO $FOOD_MENU "
+      "('food_name', 'food_price', 'food_quantity', 'category_id', 'availability', 'manager_id') "
+      "VALUES ('$foodName', '$foodPrice', 0, ${categoryID[0]['category_id']}, 1, 101)");
   return 0;
 }
 
@@ -42,7 +43,7 @@ class _YemekEkleViewState extends State<YemekEkleView> {
   TextEditingController foodName = new TextEditingController();
   TextEditingController foodPrice = new TextEditingController();
   SqlDB sqlDB = SqlDB();
-  String dropdownValue = 'Çorba';
+  String dropdownValue = 'Corba';
   bool confBtnIsChecked = false;
   String? _error;
 
@@ -275,4 +276,4 @@ class _YemekEkleViewState extends State<YemekEkleView> {
   }
 }
 
-List<String> dropDownMenuItems = ['Çorba', 'Salata', 'Zeytinyağlı', 'Ara Sıcak', 'Ana Yemek', 'İçecek', 'Tatlı'];
+List<String> dropDownMenuItems = ['Corba', 'Salata', 'Zeytinyağlılar', 'Ara Sıcaklar', 'Ana Yemekler', 'İçecekler', 'Tatlılar'];

@@ -4,55 +4,55 @@ import 'package:odev/view/menu_view/menu_view.dart';
 import 'package:validators/validators.dart';
 
 import '../../data/menu.dart';
-import '../yemek_aktife_al_view/yemek_aktife_al_view.dart';
+import '../yemek_pasife_al_view/yemek_pasife_al_view.dart';
 
-class YemekPasifeAlView extends StatefulWidget {
+class YemekAktifeAlView extends StatefulWidget {
   final double phoneWidth, phoneHeight;
 
-  const YemekPasifeAlView(this.phoneWidth, this.phoneHeight, {Key? key}) : super(key: key);
+  const YemekAktifeAlView(this.phoneWidth, this.phoneHeight, {Key? key}) : super(key: key);
 
   @override
-  State<YemekPasifeAlView> createState() => _YemekPasifeAlViewState();
+  State<YemekAktifeAlView> createState() => _YemekAktifeAlViewState();
 }
 
-String dropdownPassiveValue = '';
+String dropdownActiveValue = '';
 bool firstTime = true;
 
 List<String> adminNames = ['Emre Güler', 'Abd Alrahim', 'Yüsra Kaplan'];
 
-Future<int> addPassiveList() async {
-  dropDownPassiveItems = [];
-  List<Map> foodList = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE availability = 1");
-  if(foodList.isEmpty){
+Future<int> addActiveList() async {
+  dropDownActiveItems = [];
+  List<Map> foodList = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE availability = 0");
+  if (foodList.isEmpty) {
     return 0;
   }
   for (int i = 0; i < foodList.length; i++) {
-    if (foodList[i]['availability'] == 1) {
-      dropDownPassiveItems.add(foodList[i]['food_name']);
+    if (foodList[i]['availability'] == 0) {
+      dropDownActiveItems.add(foodList[i]['food_name']);
     }
   }
   if (firstTime) {
     print("seet");
-    dropdownPassiveValue = dropDownPassiveItems[0];
+    dropdownActiveValue = dropDownActiveItems[0];
     firstTime = false;
   }
   return 0;
 }
 
-Future<int> makeFoodPassive(foodName, adminName) async {
+Future<int> makeFoodActive(foodName, adminName) async {
   // List<Map> foodList = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE food_name = ${targetFood.foodName}");
   for (int i = 0; i < adminNames.length; i++) {
     if (adminName == adminNames[i]) {
-      await sqlDB.updateData("UPDATE $FOOD_MENU SET 'availability' = 0 WHERE food_name = '$foodName'");
-      await addPassiveList();
+      await sqlDB.updateData("UPDATE $FOOD_MENU SET 'availability' = 1 WHERE food_name = '$foodName'");
       await addActiveList();
+      await addPassiveList();
       return 1;
     }
   }
   return 0;
 }
 
-class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
+class _YemekAktifeAlViewState extends State<YemekAktifeAlView> {
   bool confBtnisChecked = false;
   TextEditingController adminName = TextEditingController();
   String? _error;
@@ -61,7 +61,7 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("YEMEK PASİFE AL"),
+        title: const Text("YEMEK AKTİFE AL"),
         automaticallyImplyLeading: false,
       ),
       resizeToAvoidBottomInset: false,
@@ -71,14 +71,14 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Pasife alınacak yemeğin adını girin:",
+              "Aktife alınacak yemeği seçin:",
               style: TextStyle(
                 fontSize: 20,
               ),
             ),
             dropDownPassiveMenu(),
             const Text(
-              "Yemek Pasife Alacak Yönetici",
+              "Yemek Aktife Alacak Yönetici",
               style: TextStyle(
                 fontSize: 20,
               ),
@@ -161,7 +161,7 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
           ),
         ),
         const Text(
-          "Pasife alma işlemini onaylıyorum",
+          "Aktife alma işlemini onaylıyorum",
           style: TextStyle(
             fontSize: 16,
           ),
@@ -183,13 +183,13 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
               return;
             }
             if (confBtnisChecked) {
-              if (await makeFoodPassive(dropdownPassiveValue, adminName.text) == 1) {
+              if (await makeFoodActive(dropdownActiveValue, adminName.text) == 1) {
                 await printTableLogs();
                 setState(() {
-                  dropDownPassiveItems = dropDownPassiveItems;
+                  dropDownActiveItems = dropDownActiveItems;
                 });
                 firstTime = true;
-                await addPassiveList();
+                await addActiveList();
                 await loadDataFromDB();
               } else {
                 setState(() {
@@ -203,7 +203,7 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
             }
           },
           style: ElevatedButton.styleFrom(fixedSize: Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),
-          child: const Text("Pasife Al", style: TextStyle(fontSize: 25))),
+          child: const Text("Aktife Al", style: TextStyle(fontSize: 25))),
     );
   }
 
@@ -224,25 +224,25 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
               size: 30,
             ),
             borderRadius: BorderRadius.circular(20),
-            value: dropdownPassiveValue,
+            value: dropdownActiveValue,
             onChanged: (String? value) {
               setState(() {
-                dropdownPassiveValue = value!;
+                dropdownActiveValue = value!;
               });
             },
             style: const TextStyle(color: Colors.black),
             selectedItemBuilder: (BuildContext context) {
-              return dropDownPassiveItems.map((String value) {
+              return dropDownActiveItems.map((String value) {
                 return Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    dropdownPassiveValue,
+                    dropdownActiveValue,
                     style: const TextStyle(color: Colors.black),
                   ),
                 );
               }).toList();
             },
-            items: dropDownPassiveItems.map<DropdownMenuItem<String>>((String value) {
+            items: dropDownActiveItems.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -263,4 +263,4 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
   }
 }
 
-List<String> dropDownPassiveItems = [];
+List<String> dropDownActiveItems = [];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odev/DB/sqlDB.dart';
 
 import '../../data/menu.dart';
 import '../menu_view/menu_view.dart';
@@ -13,32 +14,36 @@ class LastOrderView extends StatefulWidget {
 }
 
 Future<int> checkOutCart() async {
-  await sqlDB.deleteData("DELETE FROM 'lastOrder'");
+  // await sqlDB.deleteData("DELETE FROM $LAST_ORDER_MENU");
   for (int i = 0; i < cartList.length; i++) {
     Yemekler food = cartList[i];
-    List<Map> foodInfo = await sqlDB.readData("SELECT * FROM 'cartMenu1' WHERE name = '${food.foodName}'");
+    List<Map> foodInfo = await sqlDB.readData("SELECT * FROM $CART_MENU WHERE food_name = '${food.foodName}'");
     // print(foodInfo[0]);
-    await sqlDB.insertData("INSERT INTO 'lastOrder' "
-        "('id', 'name', 'price', 'food_quantity', 'total_price', 'table_id') "
-        "VALUES (${foodInfo[0]['id']}, '${foodInfo[0]['name']}', '${foodInfo[0]['price']}', '${foodInfo[0]['food_quantity']}' , "
-        "${await calculateCartPrice()}, 402)");
+    await sqlDB.insertData("INSERT INTO $LAST_ORDER_MENU "
+        "('food_id', 'food_name', 'food_price', 'food_quantity', 'total_price') "
+        "VALUES (${foodInfo[0]['food_id']}, '${foodInfo[0]['food_name']}', '${foodInfo[0]['food_price']}', '${foodInfo[0]['food_quantity']}', "
+        "${await calculateCartPrice()})");
     // print(await calculateCartPrice());
   }
   return 0;
 }
 
 Future<double> getCheckOutCartPrice() async {
-    List<Map> foodInfo = await sqlDB.readData("SELECT total_price FROM 'lastOrder'");
-    print(foodInfo[0]['total_price']);
-    // await sqlDB.insertData("INSERT INTO 'lastOrder' "
-    //     "('id', 'name', 'price', 'food_quantity', 'total_price', 'table_id') "
-    //     "VALUES (${foodInfo[0]['id']}, '${foodInfo[0]['name']}', '${foodInfo[0]['price']}', '${foodInfo[0]['food_quantity']}' , "
-    //     "${await calculateCartPrice()}, 402)");
-    lastOrderCartPrice = foodInfo[0]['total_price'];
-    return foodInfo[0]['total_price'];
+  List<Map> foodInfo = await sqlDB.readData("SELECT total_price FROM $LAST_ORDER_MENU");
+  if (foodInfo.isEmpty) {
+    return 0.00;
+  }
+  print(foodInfo[0]['total_price']);
+  // await sqlDB.insertData("INSERT INTO 'lastOrder' "
+  //     "('id', 'name', 'price', 'food_quantity', 'total_price', 'table_id') "
+  //     "VALUES (${foodInfo[0]['id']}, '${foodInfo[0]['name']}', '${foodInfo[0]['price']}', '${foodInfo[0]['food_quantity']}' , "
+  //     "${await calculateCartPrice()}, 402)");
+  lastOrderCartPrice = foodInfo[0]['total_price'];
+  return foodInfo[0]['total_price'];
 }
 
 double lastOrderCartPrice = 0;
+
 class _LastOrderViewState extends State<LastOrderView> {
   @override
   Widget build(BuildContext context) {
@@ -61,7 +66,7 @@ class _LastOrderViewState extends State<LastOrderView> {
               Container(
                   padding: EdgeInsets.symmetric(vertical: widget.phoneHeight * 0.02),
                   decoration:
-                  BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(30), border: Border.all(color: Colors.blue.shade200)),
+                      BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(30), border: Border.all(color: Colors.blue.shade200)),
                   child: Column(children: [
                     lastOrderListView(),
                     Container(
@@ -76,30 +81,6 @@ class _LastOrderViewState extends State<LastOrderView> {
             ])));
   }
 
-  // ListView lastOrderDetails() {
-  //   return ListView(shrinkWrap: true, children: [
-  //     Padding(
-  //       padding: EdgeInsets.only(left: widget.phoneWidth * 0.02),
-  //       child: Column(children: [
-  //         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-  //           Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: const [
-  //             Text("Mercimek Çorbası", maxLines: 1, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-  //             Text("0.00 TL", style: TextStyle(fontSize: 20)),
-  //           ]),
-  //           Container(
-  //             margin: EdgeInsets.only(right: widget.phoneWidth * 0.03),
-  //             decoration:
-  //                 BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.blue.shade200)),
-  //             width: widget.phoneWidth * 0.1,
-  //             height: widget.phoneHeight * 0.04,
-  //             alignment: Alignment.center,
-  //             child: const Text("1", style: TextStyle(fontSize: 20)),
-  //           ),
-  //         ]),
-  //       ]),
-  //     )
-  //   ]);
-  // }
 
   Column lastOrderListView() {
     return Column(children: [
@@ -126,7 +107,7 @@ class _LastOrderViewState extends State<LastOrderView> {
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             Container(
               decoration:
-              BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.blue.shade200)),
+                  BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.blue.shade200)),
               width: widget.phoneWidth * 0.2,
               height: widget.phoneHeight * 0.06,
               alignment: Alignment.center,
