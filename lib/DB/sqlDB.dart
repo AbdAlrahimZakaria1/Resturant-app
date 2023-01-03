@@ -21,7 +21,7 @@ class SqlDB {
   initialDB() async {
     String databasePath = await getDatabasesPath();
     String path = join(databasePath, 'lypo.db');
-    Database myDB = await openDatabase(path, onCreate: _onCreate, version: 29, onUpgrade: _onUpgrade);
+    Database myDB = await openDatabase(path, onCreate: _onCreate, version: 34, onUpgrade: _onUpgrade);
     return myDB;
   }
 
@@ -72,6 +72,7 @@ class SqlDB {
     //          (106, "İçecekler"),
     //          (107, "Tatlılar")
     // ''');
+
   }
 
   _onCreate(Database db, int version) async {

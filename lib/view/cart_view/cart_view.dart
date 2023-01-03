@@ -67,20 +67,16 @@ class _CartViewState extends State<CartView> {
             child: ElevatedButton(
                 onPressed: () async {
                   if (cartList.isNotEmpty) {
-                    await loadDataFromDB();
-                    await checkOutCart();
-                    lastOrderCartPrice = await getCheckOutCartPrice();
-                    setState(() {
-                      lastOrderCartPrice = lastOrderCartPrice;
-                    });
-                    await loadDataFromDB();
-                    await printTableLogs();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentMenuView(widget.phoneWidth, widget.phoneHeight)));
                   }else{
                     setState(() {
                       _error = "Lütfen ürün seçiniz";
                     });
                   }
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentMenuView(widget.phoneWidth, widget.phoneHeight)));
+                  lastOrderCartPrice = await getCheckOutCartPrice();
+                  setState(() {
+                    lastOrderCartPrice = lastOrderCartPrice;
+                  });
                 },
                 style: ElevatedButton.styleFrom(fixedSize: Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),
                 child: const Text("Siparis Ver", style: TextStyle(fontSize: 25))),
@@ -134,6 +130,7 @@ class _CartViewState extends State<CartView> {
                     int quantity = await getQuantity(yemek);
                     await loadDataFromDB();
                     await calculateCartPrice();
+                    await getCheckOutCartPrice();
                     setState(() {
                       yemek.quantity = quantity;
                     });

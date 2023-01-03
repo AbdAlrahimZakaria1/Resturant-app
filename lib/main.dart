@@ -6,8 +6,9 @@ import 'package:odev/view/yemek_pasife_al_view/yemek_pasife_al_view.dart';
 import 'package:odev/view_model/bottom_nav_bar/bottom_nav_bar_model.dart';
 import 'data/menu.dart';
 
-void main() {
+void main() async{
   runApp(const MyApp());
+  await tablesInitialization();
   calculateCartPrice();
   loadDataFromDB();
   getCheckOutCartPrice();

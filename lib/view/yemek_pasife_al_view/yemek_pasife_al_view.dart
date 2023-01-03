@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:odev/DB/sqlDB.dart';
 import 'package:odev/view/menu_view/menu_view.dart';
-import 'package:validators/validators.dart';
-
 import '../../data/menu.dart';
 import '../yemek_aktife_al_view/yemek_aktife_al_view.dart';
 
@@ -17,30 +15,34 @@ class YemekPasifeAlView extends StatefulWidget {
 
 String dropdownPassiveValue = '';
 bool firstTime = true;
+bool noActive = false;
 
 List<String> adminNames = ['Emre Güler', 'Abd Alrahim', 'Yüsra Kaplan'];
 
 Future<int> addPassiveList() async {
   dropDownPassiveItems = [];
   List<Map> foodList = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE availability = 1");
-  if(foodList.isEmpty){
+  if (foodList.isEmpty) {
+    noActive = true;
     return 0;
   }
+  noActive = false;
   for (int i = 0; i < foodList.length; i++) {
     if (foodList[i]['availability'] == 1) {
       dropDownPassiveItems.add(foodList[i]['food_name']);
     }
   }
   if (firstTime) {
-    print("seet");
     dropdownPassiveValue = dropDownPassiveItems[0];
     firstTime = false;
+  }
+  if(dropDownPassiveItems.isEmpty){
+    noActive = true;
   }
   return 0;
 }
 
 Future<int> makeFoodPassive(foodName, adminName) async {
-  // List<Map> foodList = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE food_name = ${targetFood.foodName}");
   for (int i = 0; i < adminNames.length; i++) {
     if (adminName == adminNames[i]) {
       await sqlDB.updateData("UPDATE $FOOD_MENU SET 'availability' = 0 WHERE food_name = '$foodName'");
@@ -176,6 +178,14 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
       padding: EdgeInsets.only(top: widget.phoneHeight * 0.01),
       child: ElevatedButton(
           onPressed: () async {
+            await addActiveList();
+            await addPassiveList();
+            if(noActive){
+              setState(() {
+                _error = "Lütfen bir yemek seçin!";
+              });
+              return;
+            }
             if (!confBtnisChecked && adminName.text.isEmpty) {
               setState(() {
                 _error = "Lütfen geçerli alanları doldurun!";
@@ -190,16 +200,24 @@ class _YemekPasifeAlViewState extends State<YemekPasifeAlView> {
                 });
                 firstTime = true;
                 await addPassiveList();
+                await addActiveList();
                 await loadDataFromDB();
+                setState(() {
+                  _error = "";
+                });
+                return;
               } else {
                 setState(() {
                   _error = "Lütfen yönetici adını doğru şekilde girin!";
                 });
+                return;
               }
-            } else {
+            }
+            if (!confBtnisChecked) {
               setState(() {
                 _error = "Lütfen pasife alma işlemini onaylayın!";
               });
+              return;
             }
           },
           style: ElevatedButton.styleFrom(fixedSize: Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),

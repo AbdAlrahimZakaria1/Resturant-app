@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:odev/data/menu.dart';
 import 'package:odev/view/menu_view/menu_view.dart';
 import '../../DB/sqlDB.dart';
+import '../../view_model/bottom_nav_bar/bottom_nav_bar_model.dart';
+import '../last_orders_view/last_order_view.dart';
 import '../yemek_pasife_al_view/yemek_pasife_al_view.dart';
 import 'package:validators/validators.dart';
 
@@ -20,14 +22,17 @@ bool isNumeric(String s) {
   }
   return double.tryParse(s) != null;
 }
-
 class _PaymentMenuViewState extends State<PaymentMenuView> {
-  TextEditingController foodName = new TextEditingController();
-  TextEditingController foodPrice = new TextEditingController();
+  TextEditingController cardName = new TextEditingController();
+  TextEditingController cardNumber = new TextEditingController();
+  TextEditingController cardLastDate = new TextEditingController();
+  TextEditingController cvc = new TextEditingController();
+
   SqlDB sqlDB = SqlDB();
   String dropdownValue = 'Corba';
   bool confBtnIsChecked = false;
   String? _error;
+  MaterialColor colorError = Colors.red;
 
   @override
   Widget build(BuildContext context) {
@@ -38,24 +43,29 @@ class _PaymentMenuViewState extends State<PaymentMenuView> {
         automaticallyImplyLeading: false,
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: widget.phoneHeight * 0.2, left: widget.phoneWidth * 0.03),
+        padding: EdgeInsets.symmetric(horizontal: widget.phoneWidth * 0.03) + EdgeInsets.only(top: widget.phoneHeight * 0.07),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              "Kart Üzerindeki İsim",
-              style: TextStyle(
-                fontSize: 20,
-              ),
+            textFieldTitle("Kart Üzerindeki İsim"),
+            textFieldView(cardName, "Ad Soyad", 0.94),
+            textFieldTitle("Kart Numarası"),
+            textFieldView(cardNumber, "0000 **** **** ****", 0.94),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [textFieldTitle("Son Kullanma Tarihi"), textFieldView(cardLastDate, "MM/YY", 0.45)],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [textFieldTitle("CVC"), textFieldView(cvc, "***", 0.45)],
+                ),
+              ],
             ),
-            CartNameTextField(),
-            const Text(
-              "Kart Numarası",
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            CartNumberTextField(),
             PaymentButton(),
             errorBox()
           ],
@@ -64,37 +74,26 @@ class _PaymentMenuViewState extends State<PaymentMenuView> {
     );
   }
 
-  Container CartNameTextField() {
-    return Container(
-      margin: EdgeInsets.only(top: widget.phoneHeight * 0.01, bottom: widget.phoneHeight * 0.02),
-      height: widget.phoneHeight * 0.05,
-      width: widget.phoneWidth * 0.94,
-      child: TextField(
-        maxLines: 1,
-        controller: foodName,
-        decoration: const InputDecoration(
-          hintText: "Ad Soyad",
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        ),
+  Widget textFieldTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 20,
       ),
     );
   }
 
-  Container CartNumberTextField() {
+  Widget textFieldView(TextEditingController controller, String hintText, double width) {
     return Container(
-      margin: EdgeInsets.only(
-        top: widget.phoneHeight * 0.01,
-      ),
-      height: widget.phoneHeight * 0.05,
-      width: widget.phoneWidth * 0.94,
+      margin: EdgeInsets.symmetric(vertical: widget.phoneHeight * 0.02),
+      width: widget.phoneWidth * width,
       child: TextField(
-        controller: foodPrice,
         maxLines: 1,
-        decoration: const InputDecoration(
-          hintText: "0000 **** **** ****",
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         ),
       ),
     );
@@ -106,9 +105,66 @@ class _PaymentMenuViewState extends State<PaymentMenuView> {
       alignment: Alignment.centerLeft,
       child: ElevatedButton(
           onPressed: () async {
+            if (cardName.text.isEmpty || cardNumber.text.isEmpty || cardLastDate.text.isEmpty || cvc.text.isEmpty) {
+              setState(() {
+                _error = "Lütfen boş alanları doldurunuz!";
+              });
+              return;
+            }
+
+            if (!isAlpha(cardName.text)) {
+              setState(() {
+                _error = "Lütfen geçerli karakter girin!";
+              });
+              return;
+            }
+            if (!isNumeric(cardNumber.text)) {
+              setState(() {
+                _error = "Lütfen geçerli karakter girin!";
+              });
+              return;
+            }
+            if (cardNumber.text.length != 16) {
+              setState(() {
+                _error = "Lütfen geçerli bir kart numarası girin!";
+              });
+              return;
+            }
+            if (!isNumeric(cvc.text) || double.parse(cvc.text) < 0 || double.parse(cvc.text) > 999) {
+              setState(() {
+                _error = "Lütfen geçerli bir CVC kodu girin!";
+              });
+              return;
+            }
+            if (!isNumeric(cardLastDate.text) || cardLastDate.text.length != 4) {
+              setState(() {
+                _error = "Lütfen geçerli bir tarih giriniz!";
+              });
+              return;
+            }
+            colorError = Colors.green;
+            setState(() {
+              _error = "Siparişiniz Alındı!";
+            });
+            await addPassiveList();
+            await loadDataFromDB();
+            await checkOutCart();
+            lastOrderCartPrice = await getCheckOutCartPrice();
+            setState(() {
+              lastOrderCartPrice = lastOrderCartPrice;
+            });
             // await loadDataFromDB();
-            // await printTableLogs();
-            // await addPassiveList();
+            await sqlDB.updateData("UPDATE $FOOD_MENU SET 'food_quantity' = 0");
+            await sqlDB.updateData("UPDATE $CART_MENU SET 'food_quantity' = 0");
+            await sqlDB.updateData("UPDATE $CART_MENU SET 'total_price' = 0");
+            await loadDataFromDB();
+            await printTableLogs();
+            double cartFullPrice = await calculateCartPrice();
+            setState(() {
+              cartFullPrice = cartFullPrice;
+            });
+            await Future.delayed(Duration(seconds: 3));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MainBottomNavBar(widget.phoneWidth, widget.phoneHeight, 0)));            await Future.delayed(Duration(seconds: 3));
           },
           style: ElevatedButton.styleFrom(fixedSize: Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),
           child: const Text("Ödeme Yap", style: TextStyle(fontSize: 25))),
@@ -119,9 +175,7 @@ class _PaymentMenuViewState extends State<PaymentMenuView> {
     return Container(
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.only(right: widget.phoneWidth * 0.03),
-      child: Text(_error ?? "", style: const TextStyle(fontSize: 20, color: Colors.red)),
+      child: Text(_error ?? "", style: TextStyle(fontSize: 20, color: colorError)),
     );
   }
 }
-
-List<String> dropDownMenuItems = ['Corba', 'Salata', 'Zeytinyağlılar', 'Ara Sıcaklar', 'Ana Yemekler', 'İçecekler', 'Tatlılar'];

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:odev/DB/sqlDB.dart';
 import 'package:odev/view/menu_view/menu_view.dart';
-import 'package:validators/validators.dart';
-
 import '../../data/menu.dart';
 import '../yemek_pasife_al_view/yemek_pasife_al_view.dart';
 
@@ -17,25 +15,32 @@ class YemekAktifeAlView extends StatefulWidget {
 
 String dropdownActiveValue = '';
 bool firstTime = true;
-
+bool noPassive = false;
 List<String> adminNames = ['Emre Güler', 'Abd Alrahim', 'Yüsra Kaplan'];
 
 Future<int> addActiveList() async {
   dropDownActiveItems = [];
   List<Map> foodList = await sqlDB.readData("SELECT * FROM $FOOD_MENU WHERE availability = 0");
   if (foodList.isEmpty) {
+    noPassive = true;
+    print(noPassive);
     return 0;
   }
+  noPassive = false;
   for (int i = 0; i < foodList.length; i++) {
     if (foodList[i]['availability'] == 0) {
       dropDownActiveItems.add(foodList[i]['food_name']);
     }
   }
   if (firstTime) {
-    print("seet");
+    print("se11111et");
     dropdownActiveValue = dropDownActiveItems[0];
     firstTime = false;
   }
+  if(dropDownActiveItems.isEmpty){
+    noPassive = true;
+  }
+  print(noPassive);
   return 0;
 }
 
@@ -76,7 +81,7 @@ class _YemekAktifeAlViewState extends State<YemekAktifeAlView> {
                 fontSize: 20,
               ),
             ),
-            dropDownPassiveMenu(),
+            dropDownActiveMenu(),
             const Text(
               "Yemek Aktife Alacak Yönetici",
               style: TextStyle(
@@ -85,7 +90,7 @@ class _YemekAktifeAlViewState extends State<YemekAktifeAlView> {
             ),
             adSoyadTextField(),
             checkBox(),
-            pasifeAlButton(),
+            AktifeAlButton(),
             errorBox(),
           ],
         ),
@@ -170,19 +175,27 @@ class _YemekAktifeAlViewState extends State<YemekAktifeAlView> {
     );
   }
 
-  Container pasifeAlButton() {
+  Container AktifeAlButton() {
     return Container(
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.only(top: widget.phoneHeight * 0.01),
       child: ElevatedButton(
           onPressed: () async {
+            await addPassiveList();
+            await addActiveList();
+            if(noPassive){
+              setState(() {
+                _error = "Lütfen bir yemek seçin!";
+              });
+              return;
+            }
             if (!confBtnisChecked && adminName.text.isEmpty) {
               setState(() {
                 _error = "Lütfen geçerli alanları doldurun!";
               });
               return;
             }
-            if (confBtnisChecked) {
+            if (confBtnisChecked && await makeFoodActive(dropdownActiveValue, adminName.text) == 1) {
               if (await makeFoodActive(dropdownActiveValue, adminName.text) == 1) {
                 await printTableLogs();
                 setState(() {
@@ -190,24 +203,42 @@ class _YemekAktifeAlViewState extends State<YemekAktifeAlView> {
                 });
                 firstTime = true;
                 await addActiveList();
+                await addPassiveList();
                 await loadDataFromDB();
-              } else {
                 setState(() {
-                  _error = "Lütfen yönetici adını doğru şekilde girin!";
+                  _error = "";
+                  // dropdownActiveValue = "";
                 });
+                return;
               }
-            } else {
-              setState(() {
-                _error = "Lütfen pasife alma işlemini onaylayın!";
-              });
             }
+            if(confBtnisChecked && await makeFoodActive(dropdownActiveValue, adminName.text) == 0) {
+              setState(() {
+                _error = "Lütfen yönetici adını doğru şekilde girin!";
+              });
+              return;
+            }
+            print("_error1122");
+
+            if (!confBtnisChecked) {
+              setState(() {
+                _error = "Lütfen Aktife alma işlemini onaylayın!";
+              });
+              return;
+            }
+            print("_error11");
+
+            setState(() {
+              _error = "";
+            });
+            print("_error");
           },
           style: ElevatedButton.styleFrom(fixedSize: Size(widget.phoneWidth * 0.94, widget.phoneHeight * 0.06)),
           child: const Text("Aktife Al", style: TextStyle(fontSize: 25))),
     );
   }
 
-  Container dropDownPassiveMenu() {
+  Container dropDownActiveMenu() {
     return Container(
       margin: EdgeInsets.only(top: widget.phoneHeight * 0.01, bottom: widget.phoneHeight * 0.02),
       width: widget.phoneWidth * 0.94,

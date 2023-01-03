@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:odev/DB/sqlDB.dart';
 import 'package:odev/data/menu.dart';
-
 import '../cart_view/cart_view.dart';
 
 class MenuView extends StatefulWidget {
@@ -80,7 +79,6 @@ Future<int> printTableLogs() async {
 Future<int> deleteFood(Yemekler targetFood) async {
   // delete a single product
   await sqlDB.deleteData("DELETE FROM $FOOD_MENU WHERE food_name = '${targetFood.foodName}'");
-  // await sqlDB.deleteData("DELETE FROM 'cartMenu1' WHERE food_name = '${targetFood.foodName}'");
   return 0;
 }
 
@@ -307,14 +305,11 @@ class _MenuViewState extends State<MenuView> {
                     setState(() {
                       cartFullPrice = cartFullPrice;
                     });
-                    // await loadDataFromDB();
-                    // await printTableLogs();
                   } else {
                     setState(() {
                       _error = "Lütfen bir masaya oturun!";
                     });
                   }
-                  // await loadDataFromDB();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: available ? Colors.blue : Colors.grey,
