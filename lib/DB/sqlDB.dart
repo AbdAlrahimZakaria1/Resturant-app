@@ -110,16 +110,6 @@ class SqlDB {
       "category_name" TEXT NOT NULL
       )
     ''');
-    await db.execute('''
-      INSERT INTO $FOOD_CATEGORY (category_id, category_name)
-      VALUES (101, "Corba"),
-             (102, "Salata"),
-             (103, "Zeytinyağlılar"),
-             (104, "Ara Sıcaklar"),
-             (105, "Ana Yemekler"),
-             (106, "İçecekler"),
-             (107, "Tatlılar")
-    ''');
     print("_onCreate ==========");
   }
 
