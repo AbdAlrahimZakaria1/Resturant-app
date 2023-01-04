@@ -21,7 +21,7 @@ class SqlDB {
   initialDB() async {
     String databasePath = await getDatabasesPath();
     String path = join(databasePath, 'lypo.db');
-    Database myDB = await openDatabase(path, onCreate: _onCreate, version: 34, onUpgrade: _onUpgrade);
+    Database myDB = await openDatabase(path, onCreate: _onCreate, version: 36, onUpgrade: _onUpgrade);
     return myDB;
   }
 
@@ -62,17 +62,16 @@ class SqlDB {
     //   "category_name" TEXT NOT NULL
     //   )
     // ''');
-    // await db.execute('''
-    //   INSERT INTO $FOOD_CATEGORY (category_id, category_name)
-    //   VALUES (101, "Corba"),
-    //          (102, "Salata"),
-    //          (103, "Zeytinyağlılar"),
-    //          (104, "Ara Sıcaklar"),
-    //          (105, "Ana Yemekler"),
-    //          (106, "İçecekler"),
-    //          (107, "Tatlılar")
-    // ''');
-
+    await db.execute('''
+      INSERT INTO $FOOD_CATEGORY (category_id, category_name)
+      VALUES (101, "Corba"),
+             (102, "Salata"),
+             (103, "Zeytinyağlılar"),
+             (104, "Ara Sıcaklar"),
+             (105, "Ana Yemekler"),
+             (106, "İçecekler"),
+             (107, "Tatlılar")
+    ''');
   }
 
   _onCreate(Database db, int version) async {
