@@ -88,7 +88,7 @@ class _MenuViewState extends State<MenuView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("MENU"),
+          title: const Text("MENU"),
           automaticallyImplyLeading: false,
         ),
         body: Center(
@@ -104,7 +104,7 @@ class _MenuViewState extends State<MenuView> {
                 ),
                 selectingTable(),
                 Expanded(
-                  child: ListView(physics: BouncingScrollPhysics(), children: [
+                  child: ListView(physics: const BouncingScrollPhysics(), children: [
                     corbaListView(),
                     salataListView(),
                     zeytinListView(),
@@ -124,7 +124,7 @@ class _MenuViewState extends State<MenuView> {
     return Column(children: [
       Container(alignment: Alignment.centerLeft, child: const Text("Çorbalar:", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: corba.length,
           itemBuilder: (context, index) {
@@ -145,7 +145,7 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Salatalar:", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: salata.length,
           itemBuilder: (context, index) {
@@ -166,7 +166,7 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Zeytinyağlılar:", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: zeytin.length,
           itemBuilder: (context, index) {
@@ -187,7 +187,7 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Ara Sıcaklar:", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: ara.length,
           itemBuilder: (context, index) {
@@ -208,7 +208,7 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Ana Yemekler:", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: ana.length,
           itemBuilder: (context, index) {
@@ -229,7 +229,7 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("İçecekler:", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: icecekler.length,
           itemBuilder: (context, index) {
@@ -250,7 +250,7 @@ class _MenuViewState extends State<MenuView> {
           alignment: Alignment.centerLeft,
           child: const Text("Tatlılar:", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: tatlilar.length,
           itemBuilder: (context, index) {
@@ -345,7 +345,7 @@ class _MenuViewState extends State<MenuView> {
                     readOnly: isReadOnly,
                     maxLines: 1,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(5.0),
+                      contentPadding: const EdgeInsets.all(5.0),
                       focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                       enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
                       hintText: table.toString(),

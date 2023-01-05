@@ -39,7 +39,7 @@ class _PaymentMenuViewState extends State<PaymentMenuView> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("ÖDEME"),
+        title: const Text("ÖDEME"),
         automaticallyImplyLeading: false,
       ),
       body: Padding(

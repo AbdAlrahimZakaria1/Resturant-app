@@ -46,7 +46,7 @@ class _CartViewState extends State<CartView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("SEPET"),
+        title: const Text("SEPET"),
         automaticallyImplyLeading: false,
       ),
       body: Padding(
@@ -93,7 +93,7 @@ class _CartViewState extends State<CartView> {
   Column sepetListView() {
     return Column(children: [
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: cartList.length,
           itemBuilder: (context, index) {

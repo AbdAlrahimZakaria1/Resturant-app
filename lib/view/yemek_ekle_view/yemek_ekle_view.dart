@@ -52,7 +52,7 @@ class _YemekEkleViewState extends State<YemekEkleView> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("YEMEK EKLE"),
+        title: const Text("YEMEK EKLE"),
         automaticallyImplyLeading: false,
       ),
       body: Padding(

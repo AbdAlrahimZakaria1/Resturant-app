@@ -68,7 +68,7 @@ class _LastOrderViewState extends State<LastOrderView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("GEÇMİŞ"),
+          title: const Text("GEÇMİŞ"),
           automaticallyImplyLeading: false,
         ),
         body: FutureBuilder(
@@ -109,7 +109,7 @@ class _LastOrderViewState extends State<LastOrderView> {
   Column lastOrderListView() {
     return Column(children: [
       ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: checkoutOrderList.length,
           itemBuilder: (context, index) {
