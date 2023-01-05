@@ -8,9 +8,9 @@ import 'data/menu.dart';
 
 void main() async{
   runApp(const MyApp());
+  await loadDataFromDB();
   await tablesInitialization();
   calculateCartPrice();
-  loadDataFromDB();
   getCheckOutCartPrice();
   addPassiveList();
   addActiveList();
