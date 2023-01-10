@@ -81,7 +81,7 @@ class _LastOrderViewState extends State<LastOrderView> {
                     margin: EdgeInsets.only(left: widget.phoneWidth * 0.02, bottom: widget.phoneHeight * 0.02),
                     alignment: Alignment.centerLeft,
                     child: const Text(
-                      "Son Siparis:",
+                      "",
                       style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                     ),
                   ),

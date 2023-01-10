@@ -100,7 +100,7 @@ class _MenuViewState extends State<MenuView> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Text(
                   "Aşağıdaki alana masa numaranızı giriniz:",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 selectingTable(),
                 Expanded(
