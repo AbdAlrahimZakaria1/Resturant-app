@@ -10,6 +10,7 @@ void main() async{
   runApp(const MyApp());
   await loadDataFromDB();
   await tablesInitialization();
+  await loadDataFromDB();
   calculateCartPrice();
   getCheckOutCartPrice();
   addPassiveList();

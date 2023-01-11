@@ -136,12 +136,12 @@ class _PaymentMenuViewState extends State<PaymentMenuView> {
               });
               return;
             }
-            if (!isNumeric(cardLastDate.text) || cardLastDate.text.length != 4) {
-              setState(() {
-                _error = "Lütfen geçerli bir tarih giriniz!";
-              });
-              return;
-            }
+            // if (!isNumeric(cardLastDate.text) || cardLastDate.text.length != 4) {
+            //   setState(() {
+            //     _error = "Lütfen geçerli bir tarih giriniz!";
+            //   });
+            //   return;
+            // }
             colorError = Colors.green;
             setState(() {
               _error = "Siparişiniz Alındı!";
